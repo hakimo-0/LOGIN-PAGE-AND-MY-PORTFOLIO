@@ -51,11 +51,12 @@
   
   /* Typography */
   h2 {
-    font-size: 20px;
-    font-weight: 600;
-    color: #111827;
-    margin-bottom: 4px;
-  }
+    color: #d1d5db;
+    font-size: 2.2rem;
+    font-weight: 900;
+    margin-bottom: 0.5rem;
+    letter-spacing: -1px;
+}
   
   .sub {
     font-size: 13px;
@@ -325,8 +326,9 @@
   }
   
   .login-container h2 {
+    color: #d1d5db;
     font-size: 2.2rem;
-    font-weight: 700;
+    font-weight: 900;
     margin-bottom: 0.5rem;
     letter-spacing: -1px;
   }
@@ -656,14 +658,7 @@ body {
 }
 
 
-/* ================================================================
-   3. PARTICLES CANVAS
-   ================================================================
-   الـ <canvas> ديال الجزيئات المتحركة في الخلفية.
-   position: fixed → يبقى ثابت حتى عند التمرير.
-   pointer-events: none → الكليك يمر من فوقه للعناصر تحته.
-   z-index: 0 → خلف كل شي.
-================================================================ */
+
 #particles {
   position: fixed;
   top: 0;
@@ -676,13 +671,7 @@ body {
 }
 
 
-/* ================================================================
-   4. AMBIENT GLOW ORBS
-   ================================================================
-   3 دوائر ضبابية تتحرك ببطء في الخلفية — تعطي عمق وجو.
-   filter: blur(80px) → يخليها ضبابية جداً.
-   animation: orbFloat → تتحرك بشكل عشوائي.
-================================================================ */
+
 .glow-orb {
   position: fixed;
   border-radius: 50%;
@@ -1407,11 +1396,7 @@ body {
 }
 
 
-/* ================================================================
-   20. TOOLS CATEGORY LABEL
-   ================================================================
-   .tool-label::after → خط رأسي يمتد لليمين بعد النص.
-================================================================ */
+
 .tool-section { margin-bottom: 16px; }
 
 .tool-label {
@@ -1426,6 +1411,11 @@ body {
   background: var(--border);
 }
 
+
+
+.companies { z-index: 1; display: flex; align-items: center; gap: 10px; }
+        
+.companies-name { font-weight: 700; font-size: 1.6rem; letter-spacing: -0.5px; }
 
 /* ================================================================
    21. CUSTOM SCROLLBAR

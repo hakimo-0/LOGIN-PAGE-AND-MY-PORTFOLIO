@@ -1,5 +1,6 @@
-<?php
+﻿<?php
 require 'config.php';
+require 'send_mail.php';
 
 $error = '';
 
@@ -7,39 +8,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $email = trim($_POST['email'] ?? '');
 
-    // ── Validation email ─────────────────────────────────────
+    // Validation email
     if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $error = 'Veuillez entrer une adresse email valide.';
 
     } else {
 
-        // ── Vérification email dans DB ───────────────────────
+        // Verification email dans DB
         $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ?");
         $stmt->execute([$email]);
         $user = $stmt->fetch();
 
         if (!$user) {
-            $error = 'Aucun compte associé à cet email.';
+            $error = 'Aucun compte associe a cet email.';
 
         } else {
 
-            // ── Génération du code + expiration ──────────────
-            $code    = strval(rand(100000, 999999));
-            $expires = date('Y-m-d H:i:s', strtotime('+15 minutes'));
+            // Generation du code + expiration
+            $code = strval(rand(100000, 999999));
+            $expiresAt = time() + (15 * 60);
 
-            // ── Sauvegarde dans DB ────────────────────────────
-            $stmt = $pdo->prepare("
-                UPDATE users
-                SET reset_code    = ?,
-                    reset_expires = ?
-                WHERE email = ?
-            ");
-            $stmt->execute([$code, $expires, $email]);
+            $mailError = '';
+            if (sendResetCode($email, $code, $mailError)) {
+                // Stockage temporaire en session (pas en DB)
+                $_SESSION['reset_email'] = $email;
+                $_SESSION['reset_code'] = $code;
+                $_SESSION['reset_expires'] = $expiresAt;
+                $_SESSION['reset_codes'] = [
+                    ['code' => $code, 'expires' => $expiresAt]
+                ];
 
-            // ── Redirection vers reset_password.php ──────────
-            $_SESSION['reset_email'] = $email;
-            header('Location: reset_password.php');
-            exit;
+                header('Location: reset_password.php');
+                exit;
+            }
+
+            $error = $mailError ?: 'Echec d\'envoi du code par email. Reessayez plus tard.';
         }
     }
 }
@@ -49,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ORMVATF — Mot de passe oublié</title>
+    <title>ORMVATF - Mot de passe oublie</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
@@ -57,22 +60,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <div class="left-panel">
     <div class="brand">
-        <span class="brand-name">ORMVATF</span>
+    <div class="companies">
+    <a href="login.php" style="text-decoration: none; color: inherit;">
+    <span class="companies-name">ORMVATF</span>
+</a> 
+   </div>
     </div>
     <div class="left-content">
-        <h1>Mot de passe<br><span>oublié ?</span></h1>
-        <p>Entrez votre email pour recevoir un code de réinitialisation.</p>
+        <h1>Mot de passe<br><span>oublie ?</span></h1>
+        <p>Entrez votre email pour recevoir un code de reinitialisation.</p>
     </div>
     <div class="stats-container"></div>
 </div>
 
 <div class="right-panel">
     <div class="login-container">
-        <h2>Récupération</h2>
+        <h2>Recuperation</h2>
         <p class="subtitle">Entrez votre email pour continuer.</p>
 
         <?php if ($error): ?>
-            <div class="alert-error">⚠️ <?= htmlspecialchars($error) ?></div>
+            <div class="alert-error"><?= htmlspecialchars($error) ?></div>
         <?php endif; ?>
 
         <form method="POST" action="">
@@ -89,7 +96,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <div class="ui-divider">ou</div>
         <div class="footer-text">
-            <a href="login.php">← Retour à la connexion</a>
+            <a href="login.php">Retour a la connexion</a>
         </div>
     </div>
 </div>

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once __DIR__ . '/config.php';
 
 $error   = '';
@@ -159,7 +159,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="companies">
     <a href="login.php" style="text-decoration: none; color: inherit;">
     <span class="companies-name">ORMVATF</span>
-</a>    </div>
+</a> 
+   </div>
     
     <div class="left-content">
         <h1>Créez votre<br><span>compte.</span></h1>
